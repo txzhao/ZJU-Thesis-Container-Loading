@@ -18,7 +18,6 @@ dAreaRatio_best = 0;
 for k = 1 : numBox
     % 以第k个模块为第一块（未转置）放入左上角
     [dAreaRatio, C, FinishedBox, unFinishBoxNo] = OptiBoxPacking(k, 0, C0, WBox, HBox, BoxSize);
-%     k, dAreaRatio
     if dAreaRatio > dAreaRatio_best
         dAreaRatio_best = dAreaRatio;
         C_best = C;
