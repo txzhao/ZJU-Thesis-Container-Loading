@@ -1,14 +1,13 @@
 function [dAreaRatio_best, C_best, FinishedBox_best, unFinishBoxNo_best] = BoxPacking(WBox, HBox, BoxSize)
-% 
-% WBox ÎªÌî³ä¿Õ¼ä¿í¶È£¨ÕıÕûÊı£©
-% HBox ÎªÌî³ä¿Õ¼ä¸ß¶È£¨ÕıÕûÊı£©
-% BoxSize ÎªĞèÒªÌî³äµÄ¾ØĞÎ¿é¿íÓë¸ß£¨¾ùÎªÕıÕûÊı£©
+% WBox ä¸ºå¡«å……ç©ºé—´å®½åº¦ï¼ˆæ­£æ•´æ•°ï¼‰
+% HBox ä¸ºå¡«å……ç©ºé—´é«˜åº¦ï¼ˆæ­£æ•´æ•°ï¼‰
+% BoxSize ä¸ºéœ€è¦å¡«å……çš„çŸ©å½¢å—å®½ä¸é«˜ï¼ˆå‡ä¸ºæ­£æ•´æ•°ï¼‰
 numBox = length(BoxSize);
 if size(BoxSize,1) < numBox
     BoxSize = BoxSize';
 end
 
-% ³õÊ¼»¯¸ñ¾Ö: ±ß½çÎª2, ÖĞ¼äÎª0(±íÊ¾Îª¿Õ)
+% åˆå§‹åŒ–æ ¼å±€: è¾¹ç•Œä¸º2, ä¸­é—´ä¸º0(è¡¨ç¤ºä¸ºç©º)
 C0 = zeros(HBox+2, WBox+2);
 C0(1,:) = 2*ones(1,WBox+2);
 C0(HBox+2,:) = C0(1,:);
@@ -17,7 +16,7 @@ C0(:,WBox+2) = C0(:,1);
 
 dAreaRatio_best = 0;
 for k=1:numBox
-    % ÒÔµÚk¸öÄ£¿éÎªµÚÒ»¿é£¨Î´×ªÖÃ£©·ÅÈë×óÉÏ½Ç
+    % ä»¥ç¬¬kä¸ªæ¨¡å—ä¸ºç¬¬ä¸€å—ï¼ˆæœªè½¬ç½®ï¼‰æ”¾å…¥å·¦ä¸Šè§’
     [dAreaRatio, C, FinishedBox, unFinishBoxNo] = OptiBoxPacking(k, 0, C0, WBox, HBox, BoxSize);
 %     k, dAreaRatio
     if dAreaRatio > dAreaRatio_best
@@ -26,7 +25,7 @@ for k=1:numBox
         FinishedBox_best = FinishedBox;
         unFinishBoxNo_best = unFinishBoxNo;
     end
-    % ÒÔµÚk¸öÄ£¿éÎªµÚÒ»¿é£¨¾­×ªÖÃ£©·ÅÈë×óÉÏ½Ç
+    % ä»¥ç¬¬kä¸ªæ¨¡å—ä¸ºç¬¬ä¸€å—ï¼ˆç»è½¬ç½®ï¼‰æ”¾å…¥å·¦ä¸Šè§’
     [dAreaRatio, C, FinishedBox, unFinishBoxNo] = OptiBoxPacking(k, 1, C0, WBox, HBox, BoxSize);
     if dAreaRatio > dAreaRatio_best
         dAreaRatio_best = dAreaRatio;
@@ -41,15 +40,15 @@ end
 function [dAreaRatio, C, FinishedBox, unFinishBoxNo] = OptiBoxPacking(firstBoxNo, bTranspose, C0, WBox, HBox, BoxSize)
 C = C0;
 numBox = length(BoxSize);
-% ÉèÖÃÎ´Ìî³ä¿éÓëÒÑÌî³ä¿é¼¯ºÏ
+% è®¾ç½®æœªå¡«å……å—ä¸å·²å¡«å……å—é›†åˆ
 unFinishBox = 1:numBox; 
 FinishedBox = zeros(numBox,5); numFinishedBox = 0;
 
-% ÒÔ×óÉÏ½Ç£¨2£¬2£©Îª½Ç£¬·ÅÖÃµÚÒ»¿é¾ØĞÎ¿é, ²¢½«¸ÃÄ£¿é´ÓÎ´Ìî³ä¼¯ºÏÒÆÖÁÒÑÌî³ä¼¯ºÏ
+% ä»¥å·¦ä¸Šè§’ï¼ˆ2ï¼Œ2ï¼‰ä¸ºè§’ï¼Œæ”¾ç½®ç¬¬ä¸€å—çŸ©å½¢å—, å¹¶å°†è¯¥æ¨¡å—ä»æœªå¡«å……é›†åˆç§»è‡³å·²å¡«å……é›†åˆ
 unFinishBox(firstBoxNo) = 0;
 numFinishedBox = numFinishedBox + 1;
 FinishedBox(numFinishedBox,1) = firstBoxNo;
-FinishedBox(numFinishedBox,2) = 2; % ¼ÇÂ¼¸ÃÄ£¿éµÄ×óÉÏ½Ç×ø±ê
+FinishedBox(numFinishedBox,2) = 2; % è®°å½•è¯¥æ¨¡å—çš„å·¦ä¸Šè§’åæ ‡
 FinishedBox(numFinishedBox,3) = 2;
 width_firstBox = BoxSize(firstBoxNo,1);
 height_firstBox = BoxSize(firstBoxNo,2);
@@ -58,10 +57,10 @@ if bTranspose
     width_firstBox = height_firstBox;
     height_firstBox = fTemp;
 end
-FinishedBox(numFinishedBox,4) = width_firstBox; % ¼ÇÂ¼¸ÃÄ£¿éµÄ¿í¶È
-FinishedBox(numFinishedBox,5) = height_firstBox; % ¼ÇÂ¼¸ÃÄ£¿éµÄ¸ß¶È
+FinishedBox(numFinishedBox,4) = width_firstBox; % è®°å½•è¯¥æ¨¡å—çš„å®½åº¦
+FinishedBox(numFinishedBox,5) = height_firstBox; % è®°å½•è¯¥æ¨¡å—çš„é«˜åº¦
 
-% ÒÔ×óÉÏ½Ç£¨2£¬2£©Îª½Ç£¬Ìî³ä¸Ã¾ØĞÎ¿é²¢±ê×¢±ß½ç
+% ä»¥å·¦ä¸Šè§’ï¼ˆ2ï¼Œ2ï¼‰ä¸ºè§’ï¼Œå¡«å……è¯¥çŸ©å½¢å—å¹¶æ ‡æ³¨è¾¹ç•Œ
 C(2:(height_firstBox+1),2:(width_firstBox+1)) = 1;
 C(2,2:(width_firstBox+1)) = 2;
 C(height_firstBox+1,2:(width_firstBox+1)) = 2;
@@ -69,30 +68,30 @@ C(2:(height_firstBox+1),2) = 2;
 C(2:(height_firstBox+1),width_firstBox+1) = 2;
 
 for k = 2:numBox
-    % ¼ÆËãµ±Ç°¸ñ¾ÖÏÂµÄÃ¿Ò»¸ö¿Õ½Ç
+    % è®¡ç®—å½“å‰æ ¼å±€ä¸‹çš„æ¯ä¸€ä¸ªç©ºè§’
     numAngle = 0; AnglePara = [];
     for i=2:HBox+1
         for j=2:WBox+1
-            if C(i,j)<0.1 % ±¾ÉíÎª¿Õµã
+            if C(i,j)<0.1 % æœ¬èº«ä¸ºç©ºç‚¹
                 if C(i-1,j) + C(i+1,j) + C(i,j-1) + C(i,j+1) > 3.9
-                    % ¼ÇÂ¼¿Õ½Ç×ø±ê
+                    % è®°å½•ç©ºè§’åæ ‡
                     numAngle = numAngle + 1;
                     AnglePara(numAngle,1) = i; AnglePara(numAngle,2) = j;
                     if C(i,j-1) + C(i+1,j) > 3.9
-                        AnglePara(numAngle,3) = 1;  % ½ÇÎ»ÓÚµÚIÏóÏŞ
+                        AnglePara(numAngle,3) = 1;  % è§’ä½äºç¬¬Iè±¡é™
                     elseif C(i,j+1) + C(i+1,j) > 3.9
-                        AnglePara(numAngle,3) = 2;  % ½ÇÎ»ÓÚµÚIIÏóÏŞ
+                        AnglePara(numAngle,3) = 2;  % è§’ä½äºç¬¬IIè±¡é™
                     elseif C(i,j+1) + C(i-1,j) > 3.9
-                        AnglePara(numAngle,3) = 3;  % ½ÇÎ»ÓÚµÚIIIÏóÏŞ
+                        AnglePara(numAngle,3) = 3;  % è§’ä½äºç¬¬IIIè±¡é™
                     elseif C(i,j-1) + C(i-1,j) > 3.9
-                        AnglePara(numAngle,3) = 4;  % ½ÇÎ»ÓÚµÚIVÏóÏŞ                        
+                        AnglePara(numAngle,3) = 4;  % è§’ä½äºç¬¬IVè±¡é™                        
                     end
                 end
             end
         end
     end
     
-    % ¶ÔÓÚÃ¿Ò»¸ö¿Õ½Ç£¬Ñ°ÕÒÏà¶Ô¿ÕÑ¨¶È×îĞ¡µÄ¾ØĞÎ¿é
+    % å¯¹äºæ¯ä¸€ä¸ªç©ºè§’ï¼Œå¯»æ‰¾ç›¸å¯¹ç©ºç©´åº¦æœ€å°çš„çŸ©å½¢å—
     HoleDensity = []; 
     for k1 = 1:numAngle
         y0 = AnglePara(k1,1); x0 = AnglePara(k1,2); nAngleType = AnglePara(k1,3); 
@@ -101,19 +100,19 @@ for k = 2:numBox
             case 1
                 for j =1:numBox
                     j1 = unFinishBox(j);
-                    if j1>0 % ¶ÔÓÚÎ´Ìî³ä¿é
+                    if j1>0 % å¯¹äºæœªå¡«å……å—
                         widthBox = BoxSize(j1,1); heightBox = BoxSize(j1,2);
                         dTemp(1) = WBox + 1 - (widthBox + x0 - 1);
                         dTemp(2) = y0 - 1 - heightBox;
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = (y0 - heightBox+1):y0;
                             XIndex = x0:(x0 + widthBox - 1);
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1; 
                                     dDist_BestBox = dDist;
@@ -122,19 +121,19 @@ for k = 2:numBox
                                 end
                             end
                         end
-                        % ½«Î´Ìî³ä¿é×ªÏòºó£¬ÖØ¸´¼ÆËã
+                        % å°†æœªå¡«å……å—è½¬å‘åï¼Œé‡å¤è®¡ç®—
                         widthBox = BoxSize(j1,2); heightBox = BoxSize(j1,1);
                         dTemp(1) = WBox + 1 - (widthBox + x0 - 1);
                         dTemp(2) = y0 - 1 - heightBox;
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = (y0 - heightBox+1):y0;
                             XIndex = x0:(x0 + widthBox - 1);
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1; 
                                     dDist_BestBox = dDist;
@@ -149,19 +148,19 @@ for k = 2:numBox
             case 2
                 for j =1:numBox
                     j1 = unFinishBox(j);
-                    if j1>0 % ¶ÔÓÚÎ´Ìî³ä¿é
+                    if j1>0 % å¯¹äºæœªå¡«å……å—
                         widthBox = BoxSize(j1,1); heightBox = BoxSize(j1,2);
                         dTemp(1) = x0 - 1 - widthBox;
                         dTemp(2) = y0 - 1 - heightBox;
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = (y0 - heightBox+1):y0;
                             XIndex = (x0 - widthBox+1):x0;
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1;
                                     dDist_BestBox = dDist;
@@ -170,19 +169,19 @@ for k = 2:numBox
                                 end
                             end
                         end
-                        % ½«Î´Ìî³ä¿é×ªÏòºó£¬ÖØ¸´¼ÆËã                        
+                        % å°†æœªå¡«å……å—è½¬å‘åï¼Œé‡å¤è®¡ç®—                        
                         widthBox = BoxSize(j1,2); heightBox = BoxSize(j1,1);
                         dTemp(1) = x0 - 1 - widthBox;
                         dTemp(2) = y0 - 1 - heightBox;
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = (y0 - heightBox+1):y0;
                             XIndex = (x0 - widthBox+1):x0;
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1;
                                     dDist_BestBox = dDist;
@@ -197,19 +196,19 @@ for k = 2:numBox
             case 3
                 for j =1:numBox
                     j1 = unFinishBox(j);
-                    if j1>0 % ¶ÔÓÚÎ´Ìî³ä¿é
+                    if j1>0 % å¯¹äºæœªå¡«å……å—
                         widthBox = BoxSize(j1,1); heightBox = BoxSize(j1,2);
                         dTemp(1) = x0 - widthBox - 1;
                         dTemp(2) = HBox + 1 -(y0 + heightBox -1);
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = y0:(y0+heightBox-1);
                             XIndex = (x0-widthBox+1):x0;
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1;
                                     dDist_BestBox = dDist;
@@ -218,19 +217,19 @@ for k = 2:numBox
                                 end
                             end
                         end
-                        % ½«Î´Ìî³ä¿é×ªÏòºó£¬ÖØ¸´¼ÆËã
+                        % å°†æœªå¡«å……å—è½¬å‘åï¼Œé‡å¤è®¡ç®—
                         widthBox = BoxSize(j1,2); heightBox = BoxSize(j1,1);
                         dTemp(1) = x0 - widthBox - 1;
                         dTemp(2) = HBox + 1 -(y0 + heightBox -1);
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = y0:(y0+heightBox-1);
                             XIndex = (x0-widthBox+1):x0;
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1;
                                     dDist_BestBox = dDist;
@@ -245,19 +244,19 @@ for k = 2:numBox
             case 4
                 for j =1:numBox
                     j1 = unFinishBox(j);
-                    if j1>0 % ¶ÔÓÚÎ´Ìî³ä¿é
+                    if j1>0 % å¯¹äºæœªå¡«å……å—
                         widthBox = BoxSize(j1,1); heightBox = BoxSize(j1,2);
                         dTemp(1) = WBox + 1 - (widthBox + x0 - 1);
                         dTemp(2) = HBox + 1 -(y0 + heightBox - 1);
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = y0:(y0+heightBox-1);
                             XIndex = x0:(x0+widthBox-1);
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1;
                                     dDist_BestBox = dDist;
@@ -266,19 +265,19 @@ for k = 2:numBox
                                 end
                             end
                         end
-                        % ½«Î´Ìî³ä¿é×ªÏòºó£¬ÖØ¸´¼ÆËã
+                        % å°†æœªå¡«å……å—è½¬å‘åï¼Œé‡å¤è®¡ç®—
                         widthBox = BoxSize(j1,2); heightBox = BoxSize(j1,1);
                         dTemp(1) = WBox + 1 - (widthBox + x0 - 1);
                         dTemp(2) = HBox + 1 -(y0 + heightBox - 1);
-                        if dTemp(1)>=0 && dTemp(2)>=0 % Î´³¬³öÈİÆ÷±ß½ç
-                            % Èô½«¸ÃÎ´Ìî³ä¿é·ÅÈë£¬¼ì²éÓëÒÑÌî³ä¿éÊÇ·ñÖØµş
+                        if dTemp(1)>=0 && dTemp(2)>=0 % æœªè¶…å‡ºå®¹å™¨è¾¹ç•Œ
+                            % è‹¥å°†è¯¥æœªå¡«å……å—æ”¾å…¥ï¼Œæ£€æŸ¥ä¸å·²å¡«å……å—æ˜¯å¦é‡å 
                             YIndex = y0:(y0+heightBox-1);
                             XIndex = x0:(x0+widthBox-1);
                             if sum(C(YIndex,XIndex))< 0.5 
-                                % ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+                                % å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
                                 [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox);
                                 minFunc = (dDist*dDist)/(BoxSize(j1,1)*BoxSize(j1,2));
-                                if minFunc<dmin_Best % ±£´æ×îÓÅ½á¹û
+                                if minFunc<dmin_Best % ä¿å­˜æœ€ä¼˜ç»“æœ
                                     dmin_Best = minFunc;
                                     IndexBestBox = j1;
                                     dDist_BestBox = dDist;
@@ -290,7 +289,7 @@ for k = 2:numBox
                     end
                 end
         end
-        % ±£´æÃ¿¸öÕ¼½ÇµÄ×îºÏÊÊÄ£¿é£¨¿ÕÑ¨¶È×îĞ¡£©
+        % ä¿å­˜æ¯ä¸ªå è§’çš„æœ€åˆé€‚æ¨¡å—ï¼ˆç©ºç©´åº¦æœ€å°ï¼‰
         HoleDensity(k1,1) = dmin_Best; 
         HoleDensity(k1,2) = IndexBestBox;
         HoleDensity(k1,3) = widthBestBox; 
@@ -299,7 +298,7 @@ for k = 2:numBox
         HoleDensity(k1,6) = numStickSide_BestBox;
     end
 
-    % ËÑË÷×îÓÅÕ¼½Ç
+    % æœç´¢æœ€ä¼˜å è§’
     IndexAngle = 0; dmin_Best = 100; 
     for k1 = 1:numAngle
         if HoleDensity(k1,1)<dmin_Best
@@ -317,7 +316,7 @@ for k = 2:numBox
         end
     end
     
-    % ½«¸ÃÄ£¿é´ÓÎ´Ìî³ä¼¯ºÏÒÆÖÁÒÑÌî³ä¼¯ºÏ
+    % å°†è¯¥æ¨¡å—ä»æœªå¡«å……é›†åˆç§»è‡³å·²å¡«å……é›†åˆ
     if IndexAngle<0.1 || Index_BestBox<0.5
         break;
     end
@@ -328,7 +327,7 @@ for k = 2:numBox
     widthBestBox = HoleDensity(IndexAngle,3);
     heightBestBox = HoleDensity(IndexAngle,4);
     nAngleType = AnglePara(IndexAngle,3);
-    % ¼ÇÂ¼¸ÃÄ£¿éµÄ×óÉÏ½Ç×ø±ê
+    % è®°å½•è¯¥æ¨¡å—çš„å·¦ä¸Šè§’åæ ‡
     switch nAngleType
         case 1
             FinishedBox(numFinishedBox,2) = x0;
@@ -343,10 +342,10 @@ for k = 2:numBox
             FinishedBox(numFinishedBox,2) = x0;
             FinishedBox(numFinishedBox,3) = y0;
     end
-    FinishedBox(numFinishedBox,4) = widthBestBox; % ¼ÇÂ¼¸ÃÄ£¿éµÄ¿í¶È
-    FinishedBox(numFinishedBox,5) = heightBestBox; % ¼ÇÂ¼¸ÃÄ£¿éµÄ¸ß¶È
+    FinishedBox(numFinishedBox,4) = widthBestBox; % è®°å½•è¯¥æ¨¡å—çš„å®½åº¦
+    FinishedBox(numFinishedBox,5) = heightBestBox; % è®°å½•è¯¥æ¨¡å—çš„é«˜åº¦
 
-    % ÒÔ×óÉÏ½ÇÎª»ù×¼Ìî³ä¸Ã¾ØĞÎ¿é²¢±ê×¢±ß½ç
+    % ä»¥å·¦ä¸Šè§’ä¸ºåŸºå‡†å¡«å……è¯¥çŸ©å½¢å—å¹¶æ ‡æ³¨è¾¹ç•Œ
     YIndexTop = FinishedBox(numFinishedBox,3);
     YIndexBottom = FinishedBox(numFinishedBox,3) + heightBestBox - 1;    
     XIndexLeft = FinishedBox(numFinishedBox,2);
@@ -355,7 +354,7 @@ for k = 2:numBox
     C(YIndexTop,XIndexLeft:XIndexRight) = 2;   C(YIndexBottom,XIndexLeft:XIndexRight) = 2;
     C(YIndexTop:YIndexBottom,XIndexLeft) = 2;  C(YIndexTop:YIndexBottom,XIndexRight) = 2;   
 end
-% ±£´æÎ´ÄÜÌîÈëµÄ¾ØĞÎ¿é
+% ä¿å­˜æœªèƒ½å¡«å…¥çš„çŸ©å½¢å—
 unFinishBoxNo = [];
 for j=1:numBox
     j1 = unFinishBox(j);
@@ -363,7 +362,7 @@ for j=1:numBox
         unFinishBoxNo = [unFinishBoxNo j1];
     end
 end
-% ¼ÆËãÃæ»ıÀûÓÃÂÊ
+% è®¡ç®—é¢ç§¯åˆ©ç”¨ç‡
 sumArea = 0;
 for  k=1:numFinishedBox
     sumArea = sumArea + FinishedBox(k,4)*FinishedBox(k,5);
@@ -372,12 +371,12 @@ dAreaRatio = sumArea/(WBox*HBox)*100;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAngleType, C, WBox, HBox)
-% ¶ÔÓÚºÏ·¨Õ¼½Ç²Ù×÷,¼ÆËãÓëÒÑÌî³ä¿éµÄ×îĞ¡Âü¹ş¶Ù¾àÀë
+% å¯¹äºåˆæ³•å è§’æ“ä½œ,è®¡ç®—ä¸å·²å¡«å……å—çš„æœ€å°æ›¼å“ˆé¡¿è·ç¦»
 switch nAngleType
     case 1
         YIndex = (y0 - heightBox+1):y0;
         XIndex = x0:(x0 + widthBox - 1);
-        % ÏÈ¼ÆËã¿í¶È·½ÏòµÄÍ¶Ó°
+        % å…ˆè®¡ç®—å®½åº¦æ–¹å‘çš„æŠ•å½±
         for j = x0:(WBox+2)
             wShadow(j-x0+1) = sum(C(YIndex,j));
         end
@@ -387,7 +386,7 @@ switch nAngleType
             end
         end
         xDist = xDist - widthBox;
-        % ÔÙ¼ÆËã¸ß¶È·½ÏòµÄÍ¶Ó°
+        % å†è®¡ç®—é«˜åº¦æ–¹å‘çš„æŠ•å½±
         for j = 1:y0
             hShadow(j) = sum(C(j,XIndex));
         end
@@ -401,7 +400,7 @@ switch nAngleType
     case 2
         YIndex = (y0 - heightBox+1):y0;
         XIndex = (x0 - widthBox+1):x0;
-        % ÏÈ¼ÆËã¿í¶È·½ÏòµÄÍ¶Ó°
+        % å…ˆè®¡ç®—å®½åº¦æ–¹å‘çš„æŠ•å½±
         for j = 1:x0
             wShadow(j) = sum(C(YIndex,j));
         end
@@ -411,7 +410,7 @@ switch nAngleType
             end
         end
         xDist = xDist - widthBox;
-        % ÔÙ¼ÆËã¸ß¶È·½ÏòµÄÍ¶Ó°
+        % å†è®¡ç®—é«˜åº¦æ–¹å‘çš„æŠ•å½±
         for j = 1:y0
             hShadow(j) = sum(C(j,XIndex));
         end
@@ -425,7 +424,7 @@ switch nAngleType
     case 3
         YIndex = y0:(y0+heightBox-1);
         XIndex = (x0-widthBox+1):x0;
-        % ÏÈ¼ÆËã¿í¶È·½ÏòµÄÍ¶Ó°
+        % å…ˆè®¡ç®—å®½åº¦æ–¹å‘çš„æŠ•å½±
         for j = 1:x0
             wShadow(j) = sum(C(YIndex,j));
         end
@@ -435,7 +434,7 @@ switch nAngleType
             end
         end
         xDist = xDist - widthBox;
-        % ÔÙ¼ÆËã¸ß¶È·½ÏòµÄÍ¶Ó°
+        % å†è®¡ç®—é«˜åº¦æ–¹å‘çš„æŠ•å½±
         for j = y0:(HBox+2)
             hShadow(j-y0+1) = sum(C(j,XIndex));
         end
@@ -449,7 +448,7 @@ switch nAngleType
     case 4
         YIndex = y0:(y0+heightBox-1);
         XIndex = x0:(x0+widthBox-1);
-        % ÏÈ¼ÆËã¿í¶È·½ÏòµÄÍ¶Ó°
+        % å…ˆè®¡ç®—å®½åº¦æ–¹å‘çš„æŠ•å½±
         for j = x0:(WBox+2)
             wShadow(j-x0+1) = sum(C(YIndex,j));
         end
@@ -459,7 +458,7 @@ switch nAngleType
             end
         end
         xDist = xDist - widthBox;
-        % ÔÙ¼ÆËã¸ß¶È·½ÏòµÄÍ¶Ó°
+        % å†è®¡ç®—é«˜åº¦æ–¹å‘çš„æŠ•å½±
         for j = y0:(HBox+2)
             hShadow(j-y0+1) = sum(C(j,XIndex));
         end
@@ -480,9 +479,4 @@ if yDist<=0.1,
     numStickSide = numStickSide + 1;
 end
 dDist = min(xDist, yDist);
-
-
-        
-
-
 
