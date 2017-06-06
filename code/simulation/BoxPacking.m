@@ -403,107 +403,115 @@ function [dDist, numStickSide] = ShadowDistance(widthBox, heightBox, x0, y0, nAn
 % 对于合法占角操作,计算与已填充块的最小曼哈顿距离
 switch nAngleType
     case 1
-        YIndex = (y0 - heightBox+1):y0;
-        XIndex = x0:(x0 + widthBox - 1);
+        YIndex = (y0 - heightBox + 1) : y0;
+        XIndex = x0 : (x0 + widthBox - 1);
         % 先计算宽度方向的投影
-        for j = x0:(WBox+2)
-            wShadow(j-x0+1) = sum(C(YIndex,j));
+        for j = x0 : (WBox + 2)
+            wShadow(j - x0 + 1) = sum(C(YIndex, j));
         end
-        for i1 = 1:length(wShadow);
-            if wShadow(i1)>0.5
-                xDist = i1 - 1;     break;
+        for i1 = 1 : length(wShadow);
+            if wShadow(i1) > 0.5
+                xDist = i1 - 1;     
+                break;
             end
         end
         xDist = xDist - widthBox;
         % 再计算高度方向的投影
-        for j = 1:y0
-            hShadow(j) = sum(C(j,XIndex));
+        for j = 1 : y0
+            hShadow(j) = sum(C(j, XIndex));
         end
-        for i2 = 1:y0;
-            if hShadow(y0 -i2+1)>0.5
-                yDist = i2 - 1;     break;
+        for i2 = 1 : y0;
+            if hShadow(y0 - i2 + 1) > 0.5
+                yDist = i2 - 1;     
+                break;
             end
         end
         yDist = yDist - heightBox;
         
     case 2
-        YIndex = (y0 - heightBox+1):y0;
-        XIndex = (x0 - widthBox+1):x0;
+        YIndex = (y0 - heightBox + 1) : y0;
+        XIndex = (x0 - widthBox + 1) : x0;
         % 先计算宽度方向的投影
-        for j = 1:x0
-            wShadow(j) = sum(C(YIndex,j));
+        for j = 1 : x0
+            wShadow(j) = sum(C(YIndex, j));
         end
-        for i1 = 1: x0;
-            if wShadow(x0-i1+1)>0.5
-                xDist = i1 - 1;  break;
+        for i1 = 1 : x0;
+            if wShadow(x0 - i1 + 1) > 0.5
+                xDist = i1 - 1;  
+                break;
             end
         end
         xDist = xDist - widthBox;
         % 再计算高度方向的投影
-        for j = 1:y0
-            hShadow(j) = sum(C(j,XIndex));
+        for j = 1 : y0
+            hShadow(j) = sum(C(j, XIndex));
         end
-        for i2 = 1:y0;
-            if hShadow(y0-i2+1)>0.5
-                yDist = i2 - 1;  break;
+        for i2 = 1 : y0;
+            if hShadow(y0 - i2 + 1) > 0.5
+                yDist = i2 - 1;  
+                break;
             end
         end
         yDist = yDist - heightBox;
         
     case 3
-        YIndex = y0:(y0+heightBox-1);
-        XIndex = (x0-widthBox+1):x0;
+        YIndex = y0 : (y0 + heightBox - 1);
+        XIndex = (x0 - widthBox + 1) : x0;
         % 先计算宽度方向的投影
-        for j = 1:x0
-            wShadow(j) = sum(C(YIndex,j));
+        for j = 1 : x0
+            wShadow(j) = sum(C(YIndex, j));
         end
-        for i1 = 1: x0;
-            if wShadow(x0-i1+1)>0.5
-                xDist = i1 - 1;  break;
+        for i1 = 1 : x0;
+            if wShadow(x0 - i1 + 1) > 0.5
+                xDist = i1 - 1;  
+                break;
             end
         end
         xDist = xDist - widthBox;
         % 再计算高度方向的投影
-        for j = y0:(HBox+2)
-            hShadow(j-y0+1) = sum(C(j,XIndex));
+        for j = y0 : (HBox + 2)
+            hShadow(j - y0 + 1) = sum(C(j, XIndex));
         end
-        for i2 = 1:length(hShadow);
-            if hShadow(i2)>0.5
-                yDist = i2 - 1;  break;
+        for i2 = 1 : length(hShadow);
+            if hShadow(i2) > 0.5
+                yDist = i2 - 1;  
+                break;
             end
         end
         yDist = yDist - heightBox;
 
     case 4
-        YIndex = y0:(y0+heightBox-1);
-        XIndex = x0:(x0+widthBox-1);
+        YIndex = y0 : (y0 + heightBox - 1);
+        XIndex = x0 : (x0 + widthBox - 1);
         % 先计算宽度方向的投影
-        for j = x0:(WBox+2)
-            wShadow(j-x0+1) = sum(C(YIndex,j));
+        for j = x0 : (WBox + 2)
+            wShadow(j - x0 + 1) = sum(C(YIndex, j));
         end
-        for i1 = 1:length(wShadow);
-            if wShadow(i1)>0.5
-                xDist = i1 - 1;     break;
+        for i1 = 1 : length(wShadow);
+            if wShadow(i1) > 0.5
+                xDist = i1 - 1;     
+                break;
             end
         end
         xDist = xDist - widthBox;
         % 再计算高度方向的投影
-        for j = y0:(HBox+2)
-            hShadow(j-y0+1) = sum(C(j,XIndex));
+        for j = y0 : (HBox + 2)
+            hShadow(j - y0 + 1) = sum(C(j, XIndex));
         end
-        for i2 = 1:length(hShadow);
-            if hShadow(i2)>0.5
-                yDist = i2 - 1;  break;
+        for i2 = 1 : length(hShadow);
+            if hShadow(i2) > 0.5
+                yDist = i2 - 1;  
+                break;
             end
         end
         yDist = yDist - heightBox;
 end
 numStickSide = 2;
-if xDist<=0.1,
+if xDist <= 0.1,
     xDist = 0;
     numStickSide = numStickSide + 1;
 end
-if yDist<=0.1,  
+if yDist <= 0.1,  
     yDist = 0;  
     numStickSide = numStickSide + 1;
 end
