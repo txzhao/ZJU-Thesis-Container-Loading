@@ -1,4 +1,3 @@
-%====================BoxPackingTest===================%
 % read in data
 [BoxAmount] = xlsread('BR1');
 minBorderVar = 20;
