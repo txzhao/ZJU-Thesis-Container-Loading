@@ -1,13 +1,13 @@
 function [BoxStack,Border,dAreaRatio_best,dSpaceRatio_best,C_best, FinishedBox_best,minBlankPoints,...
     BorderVars,BoxPackingInfo_record] = BoxPacking3(BoxAmount,minBorderVar)
-% ³õÊ¼²ÎÊıËµÃ÷
-% WBox, HBox, LBox - ¼¯×°Ïä³ß´ç
-% BoxAmount - »õÎï¸öÊı£¬n*12µÄ¾ØÕó£¬ÆäÖĞnÎª»õÎïÕ¾µÄ¸öÊı
-% BoxSize - »õÎï¹æ¸ñ£¨³¤ºÍ¿í£©
-% BoxQuantum - Ò»ÁĞ×î¶à·Å¼¸¸ö»õÎï
-% BoxStack - Ã¿ÖÖ»õÎïµÄ¶ÑÊı
-% StackSum - Ã¿Õ¾»õÎïµÄ×Ü¶ÑÊı
-% Border - ¼¯×°Ïä¸ñ¾ÖÖĞÏÖ´æ»õÎïµÄ×î¸ß±ß½ç
+% åˆå§‹å‚æ•°è¯´æ˜
+% WBox, HBox, LBox - é›†è£…ç®±å°ºå¯¸
+% BoxAmount - è´§ç‰©ä¸ªæ•°ï¼Œn*12çš„çŸ©é˜µï¼Œå…¶ä¸­nä¸ºè´§ç‰©ç«™çš„ä¸ªæ•°
+% BoxSize - è´§ç‰©è§„æ ¼ï¼ˆé•¿å’Œå®½ï¼‰
+% BoxQuantum - ä¸€åˆ—æœ€å¤šæ”¾å‡ ä¸ªè´§ç‰©
+% BoxStack - æ¯ç§è´§ç‰©çš„å †æ•°
+% StackSum - æ¯ç«™è´§ç‰©çš„æ€»å †æ•°
+% Border - é›†è£…ç®±æ ¼å±€ä¸­ç°å­˜è´§ç‰©çš„æœ€é«˜è¾¹ç•Œ
 
 WBox = 234;
 HBox = 589;
@@ -18,7 +18,7 @@ length = [53, 53, 43, 35, 29, 26, 23, 21, 20, 18, 15, 13];
 width = [29, 23, 21, 19, 17, 15, 13, 11, 11, 10, 9, 8];
 height = [39, 29, 29, 23, 19, 18, 17, 14, 14, 12, 11, 9];
 
-% % ÌôÑ¡ºÏÊÊµÄ³¤¿í
+% % æŒ‘é€‰åˆé€‚çš„é•¿å®½
 % for i = 1 : 12
 %         wasteV(1) = LBox*width(i)*height(i)-floor(LBox/length(i))*length(i)*width(i)*height(i);
 %         wasteV(2) = LBox*length(i)*height(i)-floor(LBox/width(i))*length(i)*width(i)*height(i);
@@ -53,7 +53,7 @@ BoxVolume = [BoxSize(1,1)*BoxSize(1,2)*LBox/BoxQuantum(1), BoxSize(2,1)*BoxSize(
     BoxSize(8,1)*BoxSize(8,2)*LBox/BoxQuantum(8), BoxSize(9,1)*BoxSize(9,2)*LBox/BoxQuantum(9), BoxSize(10,1)*BoxSize(10,2)*LBox/BoxQuantum(10), BoxSize(11,1)*BoxSize(11,2)*LBox/BoxQuantum(11),...
     BoxSize(12,1)*BoxSize(12,2)*LBox/BoxQuantum(12)]; 
 
-%ÇóÃ¿Õ¾Ã¿Ò»ÖÖÏä×ÓµÄ¶ÑÊı£¬BoxStack±íÊ¾
+%æ±‚æ¯ç«™æ¯ä¸€ç§ç®±å­çš„å †æ•°ï¼ŒBoxStackè¡¨ç¤º
 stat_num = size(BoxAmount, 1);
 Box_num = size(BoxAmount, 2);
 BoxQuantum_ = [];
@@ -64,25 +64,25 @@ BoxStack = BoxAmount ./ BoxQuantum_;
 BoxMod = mod(BoxAmount,BoxQuantum_);
 BoxStack = ceil(BoxStack);
  
-%ÇóÃ¿Õ¾Ïä×ÓµÄ×Ü¶ÑÊı£¬StackSum±íÊ¾£¬StackSumÎª1*nµÄ¾ØÕó
+%æ±‚æ¯ç«™ç®±å­çš„æ€»å †æ•°ï¼ŒStackSumè¡¨ç¤ºï¼ŒStackSumä¸º1*nçš„çŸ©é˜µ
 StackSum = sum(BoxStack');
 
-% ³õÊ¼»¯¸ñ¾Ö: ±ß½çÎª2, ÖĞ¼äÎª0(±íÊ¾Îª¿Õ)
+% åˆå§‹åŒ–æ ¼å±€: è¾¹ç•Œä¸º2, ä¸­é—´ä¸º0(è¡¨ç¤ºä¸ºç©º)
 C0 = zeros(HBox+2, WBox+2);
 C0(1,:) = 2*ones(1,WBox+2);
 C0(HBox+2,:) = C0(1,:);
 C0(:,1) = 2*ones(HBox+2,1);
 C0(:,WBox+2) = C0(:,1);
 
-%ÉèÖÃ±ß½çBorder£¬BorderÎª1*£¨WBox+2£©µÄ¾ØÕó£¬±íÊ¾Ã¿Ò»ÁĞ»õÎïµÄ¸ß¶È
+%è®¾ç½®è¾¹ç•ŒBorderï¼ŒBorderä¸º1*ï¼ˆWBox+2ï¼‰çš„çŸ©é˜µï¼Œè¡¨ç¤ºæ¯ä¸€åˆ—è´§ç‰©çš„é«˜åº¦
 Border = ones(1, WBox + 2);
 Border(1) = HBox + 1;
 Border(WBox + 2) = HBox + 1;
 NextBorder = Border;
 
-%ÉèÖÃ³õÊ¼½ÇĞÅÏ¢
-Angle0 = [2; 2; 0]; %µÚÒ»¸ö½ÇÔÚ×óÏÂ²à£¬×ø±êÎª£¨2,2£©£¬½ÇÀàĞÍÎª0
-Angle0 = [Angle0 [2; WBox + 1; 1]]; %µÚ¶ş¸ö½ÇÔÚÓÒÏÂ²à£¬×ø±êÎª£¨2,WBox + 1£©£¬½ÇÀàĞÍÎª1
+%è®¾ç½®åˆå§‹è§’ä¿¡æ¯
+Angle0 = [2; 2; 0]; %ç¬¬ä¸€ä¸ªè§’åœ¨å·¦ä¸‹ä¾§ï¼Œåæ ‡ä¸ºï¼ˆ2,2ï¼‰ï¼Œè§’ç±»å‹ä¸º0
+Angle0 = [Angle0 [2; WBox + 1; 1]]; %ç¬¬äºŒä¸ªè§’åœ¨å³ä¸‹ä¾§ï¼Œåæ ‡ä¸ºï¼ˆ2,WBox + 1ï¼‰ï¼Œè§’ç±»å‹ä¸º1
 
 dAreaRatio_best = 0;
 C_best = C0;
@@ -121,10 +121,10 @@ for station = 1 : 3
 
          end
     end
-	C0 = C_update(C_best, Border, NextBorder_best, WBox);  %¸üĞÂC0
-	Border = NextBorder_best;  %¸üĞÂ±ß½ç
-	Angle0 = Angle_update(Border, WBox);  %¸üĞÂAngle0
-	FinishedBox_best = [FinishedBox_best; FinishedBox_Current];  %¸üĞÂÒÑÍê³ÉµÄ»õÎïÊıÁ¿
+	C0 = C_update(C_best, Border, NextBorder_best, WBox);  %æ›´æ–°C0
+	Border = NextBorder_best;  %æ›´æ–°è¾¹ç•Œ
+	Angle0 = Angle_update(Border, WBox);  %æ›´æ–°Angle0
+	FinishedBox_best = [FinishedBox_best; FinishedBox_Current];  %æ›´æ–°å·²å®Œæˆçš„è´§ç‰©æ•°é‡
     BoxPackingInfo_record = [BoxPackingInfo_record BoxPackingInfo_best];
     BorderVars = [BorderVars BorderVar_Current];
 end
@@ -134,14 +134,14 @@ C0(:,1) = 2*ones(HBox+2,1);
 C0(:,WBox+2) = C0(:,1);
 C_best = C0;
 
-%¼ÆËãdAreaRatio_best
+%è®¡ç®—dAreaRatio_best
 points = sum(sum(C_best > 0)) - sum(sum(C_best > 2));
 points = points - 2 * HBox - 2 * WBox - 4;
 pointsum = sum(sum(Border(2:WBox+1) - 1));
 dAreaRatio_best = points / pointsum;
 % dAreaRatio_best = points / (max(Border(2:WBox+1)) * WBox);
 
-% ¼ÆËãdSpaceRatio_best
+% è®¡ç®—dSpaceRatio_best
 BoxRemain = BoxStack - FinishedBox_best;
 for j = 1:size(FinishedBox_best,1)
     for k = 1:size(FinishedBox_best,2) 
@@ -159,7 +159,7 @@ end
 dSpaceRatio_best = BoxVolumeSum /SpaceVolume;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%×îÓÅËã·¨
+%æœ€ä¼˜ç®—æ³•
 function [C, Angle, FinishedBox, BlankPoints, NextBorder, BoxPackingInfo] = OptimalPacking(firstBoxNo, stepNo, C_initial, Angle_initial, Border_initial, WBox, HBox, BoxSize, BoxStack, StackSum)
 C = C_initial;
 Angle = Angle_initial;
@@ -168,41 +168,41 @@ BlankPoints = 0;
 NextBorder = Border_initial;
 BoxPackingInfo=[];
 
-%±éÀúËÑË÷
+%éå†æœç´¢
 % for num = 1:25
 for num = 1:StackSum(stepNo)
-    Packing = 0;  %±¾²½ÖèÊÇ·ñ·ÅÖÃ»õÎï£¬0±íÊ¾Ã»ÓĞ·ÅÖÃ
-	Degree = 10000;  %±¾²½Öè·ÅÖÃ»õÎïµÄÑ¨¶È
-	Area = 0;  %±¾²½Öè·ÅÖÃ»õÎïµÄÃæ»ı
-	BoxPlace = [];  %±¾²½Öè·ÅÖÃ»õÎïµÄÎ»ÖÃĞÅÏ¢
-	BoxWidth = 0;  %±¾²½Öè·ÅÖÃ»õÎïµÄ¿í¶È(ÒÑ¿¼ÂÇ×ªÖÃ)
-	BoxHeight = 0;  %±¾²½Öè·ÅÖÃ»õÎïµÄ³¤¶È(ÒÑ¿¼ÂÇ×ªÖÃ)
-	BoxNoBest = 0;  %±¾²½Öè·ÅÖÃ»õÎïµÄĞòºÅ
-	%°´½ÇËÑË÷
+    Packing = 0;  %æœ¬æ­¥éª¤æ˜¯å¦æ”¾ç½®è´§ç‰©ï¼Œ0è¡¨ç¤ºæ²¡æœ‰æ”¾ç½®
+	Degree = 10000;  %æœ¬æ­¥éª¤æ”¾ç½®è´§ç‰©çš„ç©´åº¦
+	Area = 0;  %æœ¬æ­¥éª¤æ”¾ç½®è´§ç‰©çš„é¢ç§¯
+	BoxPlace = [];  %æœ¬æ­¥éª¤æ”¾ç½®è´§ç‰©çš„ä½ç½®ä¿¡æ¯
+	BoxWidth = 0;  %æœ¬æ­¥éª¤æ”¾ç½®è´§ç‰©çš„å®½åº¦(å·²è€ƒè™‘è½¬ç½®)
+	BoxHeight = 0;  %æœ¬æ­¥éª¤æ”¾ç½®è´§ç‰©çš„é•¿åº¦(å·²è€ƒè™‘è½¬ç½®)
+	BoxNoBest = 0;  %æœ¬æ­¥éª¤æ”¾ç½®è´§ç‰©çš„åºå·
+	%æŒ‰è§’æœç´¢
 	for AngleNo = 1:size(Angle, 2)
-	    BoxNo_best = 0;  %¸Ã½Ç·ÅÖÃ×î¼Ñ»õÎïµÄ»õÎïĞòºÅ
-		Degree_best = 10000;  %¸Ã½Ç·ÅÖÃ×î¼Ñ»õÎïµÄÑ¨¶È
-		Area_best = 0;  %¸Ã½Ç·ÅÖÃ×î¼Ñ»õÎïµÄÃæ»ı
-		Type_best = 0;  %¸Ã½Ç·ÅÖÃ×î¼Ñ»õÎïµÄÀàĞÍ£º0±íÊ¾Õı·Å£»1±íÊ¾×ªÖÃ
-		%°´»õÎïËÑË÷
+	    BoxNo_best = 0;  %è¯¥è§’æ”¾ç½®æœ€ä½³è´§ç‰©çš„è´§ç‰©åºå·
+		Degree_best = 10000;  %è¯¥è§’æ”¾ç½®æœ€ä½³è´§ç‰©çš„ç©´åº¦
+		Area_best = 0;  %è¯¥è§’æ”¾ç½®æœ€ä½³è´§ç‰©çš„é¢ç§¯
+		Type_best = 0;  %è¯¥è§’æ”¾ç½®æœ€ä½³è´§ç‰©çš„ç±»å‹ï¼š0è¡¨ç¤ºæ­£æ”¾ï¼›1è¡¨ç¤ºè½¬ç½®
+		%æŒ‰è´§ç‰©æœç´¢
 		for BoxNo = 1:12
-		    %µÚÒ»²½·ÅÖÃfisrtBoxNo
+		    %ç¬¬ä¸€æ­¥æ”¾ç½®fisrtBoxNo
 		    if num == 1 && BoxNo ~= firstBoxNo
 			    continue;
 			end
-			%ÅĞ¶Ï¸ÃÀàĞÍµÄ»õÎïÊÇ·ñÓĞÊ£Óà
+			%åˆ¤æ–­è¯¥ç±»å‹çš„è´§ç‰©æ˜¯å¦æœ‰å‰©ä½™
 			if FinishedBox(BoxNo) == BoxStack(stepNo, BoxNo)
 			    continue
 			end
-			%¼ÆËã»õÎïÕı·ÅÇé¿ö
+			%è®¡ç®—è´§ç‰©æ­£æ”¾æƒ…å†µ
 			point = [Angle(1, AngleNo), Angle(2, AngleNo)];
 			if Angle(3, AngleNo) == 1
 			    point(2) = point(2) - BoxSize(BoxNo, 1) + 1;
 			end
-			valid = ValidPlace(point, BoxSize(BoxNo, 1), BoxSize(BoxNo, 2), C, WBox, HBox);  %¼ÆËã¸Ã½ÇµÄÎ»ÖÃÊÇ·ñÄÜ¹»·ÅÖÃ¸Ã»õÎï
-			%Èç¹û»õÎïÄÜ¹»·ÅÖÃ£¬¼ÆËãÆäÊÇ·ñ×îÓÅ
+			valid = ValidPlace(point, BoxSize(BoxNo, 1), BoxSize(BoxNo, 2), C, WBox, HBox);  %è®¡ç®—è¯¥è§’çš„ä½ç½®æ˜¯å¦èƒ½å¤Ÿæ”¾ç½®è¯¥è´§ç‰©
+			%å¦‚æœè´§ç‰©èƒ½å¤Ÿæ”¾ç½®ï¼Œè®¡ç®—å…¶æ˜¯å¦æœ€ä¼˜
 			if valid == 1
-			    Box_degree = DegreeCompute(point, BoxSize(BoxNo, 1), BoxSize(BoxNo, 2), C);  %¼ÆËã¸Ã½ÇµÄÎ»ÖÃ·ÅÖÃ¸Ã»õÎïµÄÑ¨¶È
+			    Box_degree = DegreeCompute(point, BoxSize(BoxNo, 1), BoxSize(BoxNo, 2), C);  %è®¡ç®—è¯¥è§’çš„ä½ç½®æ”¾ç½®è¯¥è´§ç‰©çš„ç©´åº¦
 				if Box_degree < Degree_best
 				    Degree_best = Box_degree;
 					Area_best = BoxSize(BoxNo, 1) * BoxSize(BoxNo, 2);
@@ -215,15 +215,15 @@ for num = 1:StackSum(stepNo)
 					Type_best = 0;
 				end
 			end
-			%¼ÆËã»õÎï×ªÖÃ·ÅÖÃÇé¿ö
+			%è®¡ç®—è´§ç‰©è½¬ç½®æ”¾ç½®æƒ…å†µ
 			point = [Angle(1, AngleNo), Angle(2, AngleNo)];
 			if Angle(3, AngleNo) == 1
 			    point(2) = point(2) - BoxSize(BoxNo, 2) + 1;
 			end
-			valid = ValidPlace(point, BoxSize(BoxNo, 2), BoxSize(BoxNo, 1), C, WBox, HBox);  %¼ÆËã¸Ã½ÇµÄÎ»ÖÃÊÇ·ñÄÜ¹»·ÅÖÃ¸Ã»õÎï
-			%Èç¹û»õÎïÄÜ¹»·ÅÖÃ£¬¼ÆËãÆäÊÇ·ñ×îÓÅ
+			valid = ValidPlace(point, BoxSize(BoxNo, 2), BoxSize(BoxNo, 1), C, WBox, HBox);  %è®¡ç®—è¯¥è§’çš„ä½ç½®æ˜¯å¦èƒ½å¤Ÿæ”¾ç½®è¯¥è´§ç‰©
+			%å¦‚æœè´§ç‰©èƒ½å¤Ÿæ”¾ç½®ï¼Œè®¡ç®—å…¶æ˜¯å¦æœ€ä¼˜
 			if valid == 1
-			    Box_degree = DegreeCompute(point, BoxSize(BoxNo, 2), BoxSize(BoxNo, 1), C);  %¼ÆËã¸Ã½ÇµÄÎ»ÖÃ·ÅÖÃ¸Ã»õÎïµÄÑ¨¶È
+			    Box_degree = DegreeCompute(point, BoxSize(BoxNo, 2), BoxSize(BoxNo, 1), C);  %è®¡ç®—è¯¥è§’çš„ä½ç½®æ”¾ç½®è¯¥è´§ç‰©çš„ç©´åº¦
 				if Box_degree < Degree_best
 				    Degree_best = Box_degree;
 					Area_best = BoxSize(BoxNo, 1) * BoxSize(BoxNo, 2);
@@ -236,7 +236,7 @@ for num = 1:StackSum(stepNo)
 					Type_best = 1;
 				end
 			end
-			%ËÑË÷×îÓÅ»õÎï
+			%æœç´¢æœ€ä¼˜è´§ç‰©
             if BoxNo_best == 0
                 break;
             else
@@ -263,7 +263,7 @@ for num = 1:StackSum(stepNo)
 			end
 		end
 	end
-	%·ÅÖÃ×îÓÅ»õÎï
+	%æ”¾ç½®æœ€ä¼˜è´§ç‰©
 	if Packing == 0
 	    continue;
 	end
@@ -273,14 +273,14 @@ for num = 1:StackSum(stepNo)
 	C(BoxPlace(1):BoxPlace(1) + BoxHeight - 1, BoxPlace(2)) = 2;
 	C(BoxPlace(1):BoxPlace(1) + BoxHeight - 1, BoxPlace(2) + BoxWidth - 1) = 2;
 	C(BoxPlace(1) + 1:BoxPlace(1) + BoxHeight - 2, BoxPlace(2) + 1:BoxPlace(2) + BoxWidth - 2) = 1;
-	%ĞŞ¸Ä±ß½ç
+	%ä¿®æ”¹è¾¹ç•Œ
 	for k = BoxPlace(2):BoxPlace(2) + BoxWidth - 1
 	    if BoxPlace(1) + BoxHeight - 1 > NextBorder(k)
 		    NextBorder(k) = BoxPlace(1) + BoxHeight - 1;
 		end
 	end
-	%ĞŞ¸Ä½Ç
-	%É¾³ıÀàĞÍÎª0µÄ½Ç
+	%ä¿®æ”¹è§’
+	%åˆ é™¤ç±»å‹ä¸º0çš„è§’
 	if C(BoxPlace(1), BoxPlace(2) - 1) > 0
 	    for k = 1:size(Angle, 2)
 		    if Angle(1, k) == BoxPlace(1) && Angle(2, k) == BoxPlace(2)
@@ -289,7 +289,7 @@ for num = 1:StackSum(stepNo)
 			end
 		end
 	end
-	%É¾³ıÀàĞÍÎª1µÄ½Ç
+	%åˆ é™¤ç±»å‹ä¸º1çš„è§’
 	if C(BoxPlace(1), BoxPlace(2) + BoxWidth) > 0
 	    for k = 1:size(Angle, 2)
 		    if Angle(1, k) == BoxPlace(1) && Angle(2, k) == BoxPlace(2) + BoxWidth - 1
@@ -298,8 +298,8 @@ for num = 1:StackSum(stepNo)
             end
         end
     end
-	%Ìí¼ÓĞÂ½Ç
-	%×óÓÒÁ½±ßÌí¼ÓĞÂ½Ç
+	%æ·»åŠ æ–°è§’
+	%å·¦å³ä¸¤è¾¹æ·»åŠ æ–°è§’
 	for k = BoxPlace(1):BoxPlace(1) + BoxHeight - 1
 	    if C(k, BoxPlace(2) - 1) == 0 && C(k - 1, BoxPlace(2) - 1) > 0
 		    Angle = [Angle [k; BoxPlace(2) - 1; 1]];
@@ -308,7 +308,7 @@ for num = 1:StackSum(stepNo)
 		    Angle = [Angle [k; BoxPlace(2) + BoxWidth; 0]];
 		end
 	end
-	%ÉÏ±ßÌí¼ÓĞÂ½Ç
+	%ä¸Šè¾¹æ·»åŠ æ–°è§’
 	for k = BoxPlace(2):BoxPlace(2) + BoxWidth - 1
 	    if C(BoxPlace(1) + BoxHeight, k) == 0 && C(BoxPlace(1) + BoxHeight, k - 1) > 0
 		    Angle = [Angle [BoxPlace(1) + BoxHeight; k; 0]];
@@ -318,7 +318,7 @@ for num = 1:StackSum(stepNo)
     end
     BoxPackingInfo=[BoxPackingInfo [BoxPlace(1);BoxPlace(2);BoxNoBest;Type_best]];
 end
-%¼ÆËãBlankPoints
+%è®¡ç®—BlankPoints
 for k = 2:WBox + 1
     for j = Border_initial(k):NextBorder(k)
 %     for j = 2:HBox + 1
@@ -329,7 +329,7 @@ for k = 2:WBox + 1
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%¼ÆËãĞÂµÄC0
+%è®¡ç®—æ–°çš„C0
 function C0 = C_update(C_best, Border, NextBorder_best, WBox)
 C0 = C_best;
 for k = 2:WBox + 1
@@ -342,7 +342,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%¼ÆËãĞÂµÄAngle0
+%è®¡ç®—æ–°çš„Angle0
 function Angle0 = Angle_update(Border_information, WBox)
 Angle0 = [];
 number = 0;
@@ -357,7 +357,7 @@ for k = 2:WBox+1
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%ÅĞ¶Ï»õÎïÊÇ·ñÄÜ·ñ·ÅÖÃ¸Ã´¦£¬·µ»Ø1±íÊ¾¿ÉÒÔ
+%åˆ¤æ–­è´§ç‰©æ˜¯å¦èƒ½å¦æ”¾ç½®è¯¥å¤„ï¼Œè¿”å›1è¡¨ç¤ºå¯ä»¥
 function valid = ValidPlace(anglePlace, width, height, C_information, WBox, HBox)
 valid = 0;
 if anglePlace(2) < 2
@@ -379,7 +379,7 @@ end
 valid = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%¼ÆËã»õÎï°Ú·ÅµÄÑ¨¶È
+%è®¡ç®—è´§ç‰©æ‘†æ”¾çš„ç©´åº¦
 function Box_degree = DegreeCompute(anglePlace, width, height, C_information)
 Box_degree_left = 0;
 Box_degree_right = 0;
